@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+razorpay
+python-multipart
+email-validator
