@@ -29,6 +29,9 @@ class OrderRequest(BaseModel):
     phone: str
     description: str
 
+@app.get("/")
+def home():
+    return "this endpoint doesn't support get requests"
 @app.post("/create_order")
 async def create_order(data: OrderRequest):
     try:
