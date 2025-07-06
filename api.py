@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException
 from pydantic import BaseModel
+from fastapi.responses import HTMLResponse
 import razorpay
 import smtplib
 from email.mime.text import MIMEText
@@ -102,3 +103,42 @@ async def razorpay_webhook(request: Request):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Webhook error: {str(e)}")
+
+
+
+@app.get("/payment-success", response_class=HTMLResponse)
+async def payment_success(request: Request):
+    try:
+        # Razorpay sends these as query params
+        params = dict(request.query_params)
+        razorpay_payment_id = params.get("razorpay_payment_id")
+        razorpay_order_id = params.get("razorpay_order_id")
+        razorpay_signature = params.get("razorpay_signature")
+
+        # Validate signature
+        generated_signature = hmac.new(
+            RAZORPAY_KEY_SECRET.encode(),
+            f"{razorpay_order_id}|{razorpay_payment_id}".encode(),
+            hashlib.sha256
+        ).hexdigest()
+
+        if not hmac.compare_digest(generated_signature, razorpay_signature):
+            return HTMLResponse("<h2>❌ Signature verification failed. Payment is not trusted.</h2>", status_code=400)
+
+        # ✅ Verified, show success page
+        return f"""
+        <html>
+            <head><title>Payment Success</title></head>
+            <body style="font-family:sans-serif; text-align:center; padding:50px;">
+                <h1>✅ Payment Successful!</h1>
+                <p>Payment ID: <b>{razorpay_payment_id}</b></p>
+                <p>Order ID: <b>{razorpay_order_id}</b></p>
+                <p>Thank you for enrolling in the class.</p>
+            </body>
+        </html>
+        """
+
+    except Exception as e:
+        return HTMLResponse(f"<h2>⚠️ Error: {str(e)}</h2>", status_code=500)
+
+
