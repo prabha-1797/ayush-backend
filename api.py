@@ -36,19 +36,32 @@ def home():
 @app.post("/create_order")
 async def create_order(data: OrderRequest):
     try:
-        order = razorpay_client.order.create({
+        payment_link = razorpay_client.payment_link.create({
             "amount": data.amount,
             "currency": "INR",
-            "payment_capture": 1,
-            "notes": {
+            "accept_partial": False,
+            "description": data.description,
+            "customer": {
                 "name": data.name,
-                "phone": data.phone,
-                "description": data.description
-            }
+                "contact": data.phone 
+            },
+            "notify": {
+                "sms": True,
+                "email": False
+            },
+            "reminder_enable": True,
+            "notes": {
+                "class_type": data.description
+            },
+            "callback_url": "https://ayush-backend-production-29e4.up.railway.app/payment-success",
+            "callback_method": "get"
         })
-        return {"order_id": order['id'], "status": "created"}
+
+        return {"redirect_url": payment_link['short_url'], "status": "created"}
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 # Razorpay webhook verification endpoint
 @app.post("/razorpay_webhook")
