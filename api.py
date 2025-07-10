@@ -15,7 +15,7 @@ RAZORPAY_KEY_ID = "rzp_live_gvdyaC1uttFnEa"
 RAZORPAY_KEY_SECRET = "8bPfhCaOnCf6t8TGr2IWjuWO"
 EMAIL = "teja230704@gmail.com"
 APP_PASSWORD = "hsim nlcm byyk mkuw"
-MASTER_EMAIL = "prabhavathigunda2@gmail.com"
+MASTER_EMAIL = ["prabhavathigunda2@gmail.com","ayushmanbhava.help@gmail.com"]
 
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
@@ -120,7 +120,8 @@ async def razorpay_webhook(request: Request):
             server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
             server.login(EMAIL, APP_PASSWORD)
-            server.sendmail(EMAIL, MASTER_EMAIL, msg.as_string())
+            for i in MASTER_EMAIL:
+                server.sendmail(EMAIL, i, msg.as_string())
             server.quit()
 
         return {"status": "success"}
