@@ -11,8 +11,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 app = FastAPI()
 
-RAZORPAY_KEY_ID = "rzp_test_eT9lCdOnYfweo9"
-RAZORPAY_KEY_SECRET = "1BIW3EN9r4igx1VvKirXnABf"
+RAZORPAY_KEY_ID = "rzp_live_gvdyaC1uttFnEa"
+RAZORPAY_KEY_SECRET = "8bPfhCaOnCf6t8TGr2IWjuWO"
 EMAIL = "teja230704@gmail.com"
 APP_PASSWORD = "hsim nlcm byyk mkuw"
 MASTER_EMAIL = "prabhavathigunda2@gmail.com"
