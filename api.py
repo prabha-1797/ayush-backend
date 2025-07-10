@@ -65,12 +65,16 @@ async def redirect_to_razorpay(order_id: str, amount: int, name: str, phone: str
                 "name": "Ayushman Bhava",
                 "description": "{description}",
                 "order_id": "{order_id}",
-                "callback_url": "/payment-success",
                 "prefill": {{
                     "name": "{name}",
                     "contact": "{phone}"
                 }},
-                "theme": {{"color": "#F37254"}}
+                "theme": {{"color": "#F37254"}},
+                "handler": function (response) {{
+                    window.location.href = "/payment-success?razorpay_payment_id=" + response.razorpay_payment_id +
+                                           "&razorpay_order_id=" + response.razorpay_order_id +
+                                           "&razorpay_signature=" + response.razorpay_signature;
+                }}
             }};
             var rzp = new Razorpay(options);
             rzp.open();
